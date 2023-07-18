@@ -32,7 +32,9 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'whatsapp.apps.WhatsappConfig',   # ← new item
+    'whatsapp.apps.WhatsappConfig',  
+    'mpesa.apps.MpesaConfig',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

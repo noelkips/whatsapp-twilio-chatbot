@@ -6,7 +6,7 @@ from .models import *
 from django.contrib.auth.models import User
 import requests
 from django.views.decorators.csrf import csrf_exempt
-# from mpesa.views import lipa_na_mpesa_online
+from mpesa.views import *
 
 
 
@@ -27,25 +27,26 @@ def message(request):
             user = User.objects.get(username=profileName)
             user_profile = user.profile
         else:
-             #create user
-            user =User.objects.create_user(
-                username = phoneId,
-                email = 'whitehotel@gmail.com',
-                first_name = profileName,
-                password = 'password',
-            )
-            #create profile
-            user_profile = Profile.objects.create(
-              user = user,
-              phoneNumber = fromId,
-              phoneId=phoneId,
-            )
+            if phoneId:
+                #create user
+                user =User.objects.create_user(
+                    username = phoneId,
+                    email = 'whitehotel@gmail.com',
+                    first_name = profileName,
+                    password = 'password',
+                )
+                #create profile
+                user_profile = Profile.objects.create(
+                user = user,
+                phoneNumber = fromId,
+                phoneId=phoneId,
+                )
 
-             #create chat session
-            chat = ChatSession.objects.create(profile=user_profile)
-            #send a message
-            message = "Welcome to White Hotel \n To check our menu reply with Menu \n For any other enquiry relpy with More\n"
-            response.message(message)
+                #create chat session
+                chat = ChatSession.objects.create(profile=user_profile)
+                #send a message
+                message = "Welcome to White Hotel \n To check our menu reply with Menu \n For any other enquiry relpy with More\n"
+                response.message(message)
     if "menu" in user_response and "more" not in user_response:
         if chat.selected_category:
             if chat.selected_product:
@@ -69,7 +70,7 @@ def message(request):
                     amount = order.amount
                     message = f'You are to confirm the payment of {amount} in the stk push that you received to complete the payement\n'
                     response.message(message)
-                    # lipa_na_mpesa_online(phoneId, amount)
+                    lipa_na_mpesa_online(request, phoneId, amount)
                 else:
                     message = 'How many {chosen_product.name} to you want to buy ?\n Please reply with a number\n'
                     response.message(message)
